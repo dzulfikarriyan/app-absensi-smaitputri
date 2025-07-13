@@ -7,6 +7,8 @@ const sequelize = require('./config/database');
 const kelasRoutes = require('./routes/kelasRoutes');
 const siswaRoutes = require('./routes/siswaRoutes');
 const absensiRoutes = require('./routes/absensiRoutes');
+const guruRoutes = require('./routes/guruRoutes');
+const absensiGuruRoutes = require('./routes/absensiGuruRoutes');
 
 // Import models untuk sync database
 const { Kelas, Siswa, Absensi } = require('./models');
@@ -23,6 +25,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/api/kelas', kelasRoutes);
 app.use('/api/siswa', siswaRoutes);
 app.use('/api/absensi', absensiRoutes);
+app.use('/api/guru', guruRoutes);
+app.use('/api/absensi-guru', absensiGuruRoutes);
 
 // Test route
 app.get('/', (req, res) => {

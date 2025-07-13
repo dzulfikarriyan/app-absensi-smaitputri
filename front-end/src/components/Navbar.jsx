@@ -10,11 +10,21 @@ import {
 const Navbar = () => {
   const location = useLocation();
 
-  const navItems = [
-    { name: 'Dashboard', path: '/', icon: HomeIcon },
+  // Deteksi jika di halaman guru
+  const isGuru = location.pathname.includes('guru');
+
+  const navItems = isGuru
+    ? [
+        { name: 'Dashboard', path: '/dashboard', icon: HomeIcon },
+        { name: 'Guru', path: '/data-guru', icon: UserIcon },
+        { name: 'Absensi', path: '/absensi-guru', icon: ClipboardDocumentListIcon },
+        { name: 'Rekap', path: '/rekap-guru', icon: ChartBarIcon },
+      ]
+    : [
+        { name: 'Dashboard', path: '/dashboard', icon: HomeIcon },
     { name: 'Kelas', path: '/kelas', icon: UserGroupIcon },
     { name: 'Siswa', path: '/siswa', icon: UserIcon },
-    { name: 'Absensi', path: '/absensi', icon: ClipboardDocumentListIcon },
+        { name: 'Absensi', path: '/absensi-siswa', icon: ClipboardDocumentListIcon },
     { name: 'Rekap', path: '/rekap', icon: ChartBarIcon },
   ];
 

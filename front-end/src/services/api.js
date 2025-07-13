@@ -62,4 +62,26 @@ export const absensiAPI = {
   getRekapKelas: (params) => api.get('/absensi/rekap/kelas', { params }),
 };
 
+// Guru API
+export const guruAPI = {
+  getAll: () => api.get('/guru'),
+  getById: (id) => api.get(`/guru/${id}`),
+  create: (data) => api.post('/guru', data),
+  createBatch: (dataArray) => api.post('/guru/batch', { guru_list: dataArray }),
+  update: (id, data) => api.put(`/guru/${id}`, data),
+  delete: (id) => api.delete(`/guru/${id}`),
+};
+
+// Absensi Guru API
+export const absensiGuruAPI = {
+  inputSingle: (data) => api.post('/absensi-guru', data),
+  inputBatch: (data) => api.post('/absensi-guru/batch', data),
+  getByTanggal: (tanggal) => api.get(`/absensi-guru/${tanggal}`),
+  getRekap: (params) => api.get('/absensi-guru/rekap', { params }),
+  downloadExcel: (params) => api.get('/absensi-guru/download-excel', { 
+    params,
+    responseType: 'blob' // Important for file downloads
+  }),
+};
+
 export default api; 

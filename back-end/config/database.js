@@ -3,7 +3,7 @@ const { Sequelize } = require('sequelize');
 
 // Konfigurasi database dengan environment variables atau default
 const sequelize = new Sequelize(
-  process.env.DB_NAME || 'absensi_siswa',
+  process.env.DB_NAME || 'absensi_guru',
   process.env.DB_USER || 'root',
   process.env.DB_PASSWORD || 'Sukses!@#99', // Ganti dengan password MySQL Anda
   {
@@ -29,7 +29,7 @@ const testConnection = async () => {
     console.error('❌ Gagal koneksi ke database:', error.message);
     console.log('\n🔧 Solusi:');
     console.log('1. Pastikan MySQL server berjalan');
-    console.log('2. Pastikan database "absensi_siswa" sudah dibuat');
+    console.log('2. Pastikan database "absensi_guru" sudah dibuat');
     console.log('3. Update password di config/database.js');
     console.log('4. Atau set environment variable DB_PASSWORD');
   }

@@ -1,10 +1,15 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
+import Login from './pages/Login';
+import DashboardUtama from './pages/DashboardUtama';
+import Absensi from './pages/Absensi';
+import AbsensiGuru from './pages/absensi-guru/AbsensiGuru';
+import DataGuru from './pages/absensi-guru/DataGuru';
 import Navbar from './components/Navbar';
-import Dashboard from './pages/Dashboard';
 import Kelas from './pages/Kelas';
 import Siswa from './pages/Siswa';
-import Absensi from './pages/Absensi';
 import Rekap from './pages/Rekap';
+import RekapGuru from './pages/absensi-guru/RekapGuru';
 
 // Simple test component
 const TestPage = () => (
@@ -39,17 +44,36 @@ const TestPage = () => (
   </div>
 );
 
+function RequireAuth({ children }) {
+  const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+  useEffect(() => {
+    if (!isLoggedIn) {
+      window.location.href = '/login';
+    }
+  }, [isLoggedIn]);
+  return isLoggedIn ? children : null;
+}
+
 function App() {
+  const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+  const location = useLocation();
+  const showNavbar = isLoggedIn && location.pathname !== '/login';
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navbar />
+      {showNavbar && <Navbar />}
       <main className="container mx-auto px-4 py-8">
         <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/kelas" element={<Kelas />} />
-          <Route path="/siswa" element={<Siswa />} />
-          <Route path="/absensi" element={<Absensi />} />
-          <Route path="/rekap" element={<Rekap />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/dashboard" element={<RequireAuth><DashboardUtama /></RequireAuth>} />
+          <Route path="/absensi-siswa" element={<RequireAuth><Absensi /></RequireAuth>} />
+          <Route path="/absensi-guru" element={<RequireAuth><AbsensiGuru /></RequireAuth>} />
+          <Route path="/data-guru" element={<RequireAuth><DataGuru /></RequireAuth>} />
+          <Route path="/kelas" element={<RequireAuth><Kelas /></RequireAuth>} />
+          <Route path="/siswa" element={<RequireAuth><Siswa /></RequireAuth>} />
+          <Route path="/rekap" element={<RequireAuth><Rekap /></RequireAuth>} />
+          <Route path="/rekap-guru" element={<RequireAuth><RekapGuru /></RequireAuth>} />
+          <Route path="/" element={<Navigate to={isLoggedIn ? "/dashboard" : "/login"} />} />
+          <Route path="*" element={<Navigate to="/login" />} />
         </Routes>
       </main>
     </div>
