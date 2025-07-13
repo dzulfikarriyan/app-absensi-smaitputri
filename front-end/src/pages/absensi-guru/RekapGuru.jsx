@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { absensiGuruAPI, guruAPI } from '../../services/api';
-import { FunnelIcon, ChartBarIcon } from '@heroicons/react/24/outline';
+import { FunnelIcon, ChartBarIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 import LoadingSpinner from '../../components/LoadingSpinner';
 
 const getStatusColor = (status) => {
   switch (status) {
     case 'hadir':
-      return 'bg-green-100 text-green-800';
+      return 'status-hadir';
     case 'sakit':
-      return 'bg-yellow-100 text-yellow-800';
+      return 'status-sakit';
     case 'izin':
-      return 'bg-blue-100 text-blue-800';
+      return 'status-izin';
     case 'alpa':
-      return 'bg-red-100 text-red-800';
+      return 'status-alpa';
     case 'terlambat':
-      return 'bg-orange-100 text-orange-800';
+      return 'status-terlambat';
     default:
       return 'bg-gray-100 text-gray-800';
   }
@@ -107,9 +107,13 @@ const RekapGuru = () => {
   })();
 
   const totalHadir = rekap.filter(r => r.status === 'hadir').length;
+  const totalSakit = rekap.filter(r => r.status === 'sakit').length;
+  const totalIzin = rekap.filter(r => r.status === 'izin').length;
+  const totalAlpa = rekap.filter(r => r.status === 'alpa').length;
+  const totalTerlambat = rekap.filter(r => r.status === 'terlambat').length;
   const persentaseHadir = totalHari > 0 ? Math.round((totalHadir / (rekap.length || 1)) * 100) : 0;
 
-  // Download Excel (dummy, backend bisa ditambah)
+  // Download Excel
   const handleDownloadExcel = async () => {
     try {
       // Validasi filter
@@ -164,89 +168,141 @@ const RekapGuru = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
+    <div className="container-responsive py-8">
+      {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Rekap Absensi Guru</h1>
-        <p className="text-gray-600 mt-2">Lihat rekap kehadiran guru per periode</p>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">Rekap Absensi Guru</h1>
+        <p className="text-gray-600">Lihat rekap kehadiran guru per periode</p>
       </div>
-      {/* Filter */}
+
+      {/* Filter Card */}
       <div className="card mb-6">
-        <div className="flex items-center mb-4">
-          <FunnelIcon className="h-5 w-5 text-gray-400 mr-2" />
-          <h2 className="text-lg font-semibold text-gray-900">Filter Data</h2>
+        <div className="card-header">
+          <div className="flex items-center">
+            <FunnelIcon className="h-5 w-5 text-gray-500 mr-2" />
+            <h2 className="text-lg font-semibold text-gray-900">Filter Data</h2>
+          </div>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Pilih Guru</label>
-            <select value={filterGuru} onChange={e => setFilterGuru(e.target.value)} className="input-field">
-              <option value="">Semua Guru</option>
-              {guruList.map(g => (
-                <option key={g.id} value={g.id}>{g.nama}</option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Tanggal Mulai</label>
-            <input type="date" value={startDate} onChange={handleStartDate} className="input-field" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Tanggal Akhir</label>
-            <input type="date" value={endDate} onChange={handleEndDate} className="input-field" />
-          </div>
-          <div className="flex items-end">
-            <button className="btn-primary w-full" onClick={fetchRekap} type="button">Tampilkan</button>
+        <div className="card-body">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="form-group">
+              <label className="form-label">Pilih Guru</label>
+              <select value={filterGuru} onChange={e => setFilterGuru(e.target.value)} className="input-field">
+                <option value="">Semua Guru</option>
+                {guruList.map(g => (
+                  <option key={g.id} value={g.id}>{g.nama}</option>
+                ))}
+              </select>
+            </div>
+            <div className="form-group">
+              <label className="form-label">Tanggal Mulai</label>
+              <input type="date" value={startDate} onChange={handleStartDate} className="input-field" />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Tanggal Akhir</label>
+              <input type="date" value={endDate} onChange={handleEndDate} className="input-field" />
+            </div>
+            <div className="form-group flex items-end">
+              <button className="btn-primary w-full" onClick={fetchRekap} type="button">
+                Tampilkan
+              </button>
+            </div>
           </div>
         </div>
       </div>
-      {/* Statistik */}
-      <div className="flex items-center gap-4 mb-4">
-        <div className="flex items-center gap-2 bg-gray-100 rounded px-4 py-2">
-          <ChartBarIcon className="h-5 w-5 text-primary-600" />
-          <span className="font-semibold">Total Hari:</span> {totalHari}
+
+      {/* Statistics Cards */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
+        <div className="card">
+          <div className="p-4 text-center">
+            <div className="text-2xl font-bold text-primary-600">{totalHari}</div>
+            <div className="text-sm text-gray-600">Total Hari</div>
+          </div>
         </div>
-        <div className="flex items-center gap-2 bg-gray-100 rounded px-4 py-2">
-          <span className="font-semibold">Total Hadir:</span> {totalHadir}
+        <div className="card">
+          <div className="p-4 text-center">
+            <div className="text-2xl font-bold text-success-600">{totalHadir}</div>
+            <div className="text-sm text-gray-600">Hadir</div>
+          </div>
         </div>
-        <div className="flex items-center gap-2 bg-gray-100 rounded px-4 py-2">
-          <span className="font-semibold">% Hadir:</span> {persentaseHadir}%
+        <div className="card">
+          <div className="p-4 text-center">
+            <div className="text-2xl font-bold text-warning-600">{totalSakit}</div>
+            <div className="text-sm text-gray-600">Sakit</div>
+          </div>
         </div>
+        <div className="card">
+          <div className="p-4 text-center">
+            <div className="text-2xl font-bold text-primary-600">{totalIzin}</div>
+            <div className="text-sm text-gray-600">Izin</div>
+          </div>
+        </div>
+        <div className="card">
+          <div className="p-4 text-center">
+            <div className="text-2xl font-bold text-danger-600">{totalAlpa}</div>
+            <div className="text-sm text-gray-600">Alpa</div>
+          </div>
+        </div>
+        <div className="card">
+          <div className="p-4 text-center">
+            <div className="text-2xl font-bold text-orange-600">{totalTerlambat}</div>
+            <div className="text-sm text-gray-600">Terlambat</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Download Button */}
+      <div className="flex justify-end mb-6">
         <button 
-          className="btn-secondary ml-auto" 
+          className="btn-secondary flex items-center" 
           onClick={handleDownloadExcel}
           disabled={loading || !startDate || !endDate}
         >
+          <ArrowDownTrayIcon className="h-5 w-5 mr-2" />
           {loading ? 'Mengunduh...' : 'Download Excel'}
         </button>
       </div>
-      {/* Tabel Rekap */}
+
+      {/* Data Table */}
       <div className="card">
         {loading ? (
-          <div className="p-4 text-center"><LoadingSpinner /></div>
+          <LoadingSpinner text="Memuat data..." />
         ) : error ? (
-          <div className="p-4 text-center text-red-600">{error}</div>
+          <div className="p-6 text-center">
+            <div className="alert alert-error">{error}</div>
+          </div>
         ) : rekap.length === 0 ? (
-          <div className="p-4 text-center text-gray-500">Tidak ada data rekap absensi guru.</div>
+          <div className="p-6 text-center text-gray-500">
+            <ChartBarIcon className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+            <p>Tidak ada data rekap absensi guru.</p>
+          </div>
         ) : (
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Guru</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Keterangan</th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {rekap.map((item, idx) => (
-                <tr key={idx} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{item.tanggal}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.guru?.nama || '-'}</td>
-                  <td className={`px-6 py-4 whitespace-nowrap text-sm font-semibold ${getStatusColor(item.status)}`}>{getStatusLabel(item.status)}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{item.keterangan}</td>
+          <div className="table-container">
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>Tanggal</th>
+                  <th>Nama Guru</th>
+                  <th>Status</th>
+                  <th>Keterangan</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {rekap.map((item, idx) => (
+                  <tr key={idx}>
+                    <td>{item.tanggal}</td>
+                    <td className="font-medium">{item.guru?.nama || '-'}</td>
+                    <td>
+                      <span className={`status-badge ${getStatusColor(item.status)}`}>
+                        {getStatusLabel(item.status)}
+                      </span>
+                    </td>
+                    <td>{item.keterangan || '-'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
     </div>

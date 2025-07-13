@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { getToday, formatDate, getDayName } from '../../utils/dateUtils';
 import LoadingSpinner from '../../components/LoadingSpinner';
-import { CheckIcon } from '@heroicons/react/24/outline';
+import { CheckIcon, CalendarIcon, ClockIcon } from '@heroicons/react/24/outline';
 import { guruAPI, absensiGuruAPI } from '../../services/api';
 
 const AbsensiGuru = () => {
@@ -105,60 +105,136 @@ const AbsensiGuru = () => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-gray-900 mb-4">Absensi Guru</h1>
+    <div className="container-responsive py-8">
+      {/* Header */}
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">Absensi Guru</h1>
+        <p className="text-gray-600">Input kehadiran guru untuk hari ini</p>
+      </div>
+
+      {/* Alerts */}
+      {errorMsg && (
+        <div className="alert alert-error mb-6">
+          {errorMsg}
+        </div>
+      )}
+      {successMsg && (
+        <div className="alert alert-success mb-6">
+          {successMsg}
+        </div>
+      )}
+
       <form onSubmit={handleSubmit}>
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-2">Tanggal</label>
-          <input type="date" value={selectedTanggal} onChange={e => setSelectedTanggal(e.target.value)} className="input-field" required />
-          {selectedTanggal && (
-            <p className="text-sm text-gray-500 mt-1">{formatDate(selectedTanggal)} ({getDayName(selectedTanggal)})</p>
-          )}
-        </div>
-        {errorMsg && <div className="text-red-600 mb-2">{errorMsg}</div>}
-        {successMsg && <div className="text-green-600 mb-2">{successMsg}</div>}
+        {/* Date Selection */}
         <div className="card mb-6">
-          {loading ? (
-            <div className="p-4 text-center">Loading...</div>
-          ) : (
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Guru</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Keterangan</th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {guruList.map((guru, idx) => {
-                  const absensiItem = absensiData.find(a => a.guru_id === guru.id) || { status: 'hadir', keterangan: '' };
-                  return (
-                    <tr key={guru.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{idx + 1}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{guru.nama}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <select value={absensiItem.status} onChange={e => handleStatusChange(guru.id, e.target.value)} className="input-field">
-                          <option value="hadir">Hadir</option>
-                          <option value="sakit">Sakit</option>
-                          <option value="izin">Izin</option>
-                          <option value="alpa">Alpa</option>
-                          <option value="terlambat">Terlambat</option>
-                        </select>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <input type="text" value={absensiItem.keterangan} onChange={e => handleKeteranganChange(guru.id, e.target.value)} className="input-field text-sm" placeholder="Keterangan (opsional)" />
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          )}
+          <div className="card-header">
+            <div className="flex items-center">
+              <CalendarIcon className="h-5 w-5 text-gray-500 mr-2" />
+              <h2 className="text-lg font-semibold text-gray-900">Pilih Tanggal</h2>
+            </div>
+          </div>
+          <div className="card-body">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+              <div className="flex-1">
+                <label className="form-label">Tanggal Absensi</label>
+                <input 
+                  type="date" 
+                  value={selectedTanggal} 
+                  onChange={e => setSelectedTanggal(e.target.value)} 
+                  className="input-field" 
+                  required 
+                />
+              </div>
+              {selectedTanggal && (
+                <div className="flex items-center text-sm text-gray-600">
+                  <ClockIcon className="h-4 w-4 mr-2" />
+                  {formatDate(selectedTanggal)} ({getDayName(selectedTanggal)})
+                </div>
+              )}
+            </div>
+          </div>
         </div>
+
+        {/* Attendance Table */}
+        <div className="card mb-6">
+          <div className="card-header">
+            <h2 className="text-lg font-semibold text-gray-900">Data Absensi Guru</h2>
+          </div>
+          <div className="card-body p-0">
+            {loading ? (
+              <LoadingSpinner text="Memuat data guru..." />
+            ) : guruList.length === 0 ? (
+              <div className="p-6 text-center text-gray-500">
+                <p>Belum ada data guru.</p>
+              </div>
+            ) : (
+              <div className="table-container">
+                <table className="table">
+                  <thead>
+                    <tr>
+                      <th className="w-16">No</th>
+                      <th>Nama Guru</th>
+                      <th className="w-48">Status</th>
+                      <th>Keterangan</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {guruList.map((guru, idx) => {
+                      const absensiItem = absensiData.find(a => a.guru_id === guru.id) || { status: 'hadir', keterangan: '' };
+                      return (
+                        <tr key={guru.id}>
+                          <td className="text-center">{idx + 1}</td>
+                          <td className="font-medium">{guru.nama}</td>
+                          <td>
+                            <select 
+                              value={absensiItem.status} 
+                              onChange={e => handleStatusChange(guru.id, e.target.value)} 
+                              className="input-field"
+                            >
+                              <option value="hadir">Hadir</option>
+                              <option value="sakit">Sakit</option>
+                              <option value="izin">Izin</option>
+                              <option value="alpa">Alpa</option>
+                              <option value="terlambat">Terlambat</option>
+                            </select>
+                          </td>
+                          <td>
+                            <input 
+                              type="text" 
+                              value={absensiItem.keterangan} 
+                              onChange={e => handleKeteranganChange(guru.id, e.target.value)} 
+                              className="input-field" 
+                              placeholder="Keterangan (opsional)" 
+                            />
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Submit Button */}
         <div className="flex justify-end">
-          <button type="submit" disabled={submitting || loading} className="btn-primary px-6 py-2 flex items-center justify-center disabled:opacity-50">
-            {submitting ? <LoadingSpinner size="sm" text="" /> : (<><CheckIcon className="h-5 w-5 mr-2" /> Simpan Absensi</>)}
+          <button 
+            type="submit" 
+            disabled={submitting || loading} 
+            className="btn-primary btn-lg flex items-center"
+          >
+            {submitting ? (
+              <>
+                <LoadingSpinner size="sm" text="" />
+                <span className="ml-2">Menyimpan...</span>
+              </>
+            ) : (
+              <>
+                <CheckIcon className="h-5 w-5 mr-2" />
+                Simpan Absensi
+              </>
+            )}
           </button>
         </div>
       </form>

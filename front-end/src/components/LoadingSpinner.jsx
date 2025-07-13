@@ -1,4 +1,4 @@
-const LoadingSpinner = ({ size = 'md', text = 'Loading...' }) => {
+const LoadingSpinner = ({ size = 'md', text = 'Loading...', className = '' }) => {
   const sizeClasses = {
     sm: 'h-4 w-4',
     md: 'h-8 w-8',
@@ -7,10 +7,10 @@ const LoadingSpinner = ({ size = 'md', text = 'Loading...' }) => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center p-4">
-      <div className={`animate-spin rounded-full border-b-2 border-primary-600 ${sizeClasses[size]}`}></div>
+    <div className={`flex flex-col items-center justify-center p-6 ${className}`}>
+      <div className={`loading-spinner ${sizeClasses[size]}`}></div>
       {text && (
-        <p className="mt-2 text-sm text-gray-600">{text}</p>
+        <p className="mt-3 text-sm font-medium text-gray-600 animate-pulse">{text}</p>
       )}
     </div>
   );

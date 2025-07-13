@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { guruAPI } from '../../services/api';
+import { PlusIcon, PencilIcon, TrashIcon, UserGroupIcon } from '@heroicons/react/24/outline';
+import LoadingSpinner from '../../components/LoadingSpinner';
 
 const DataGuru = () => {
   const [guruList, setGuruList] = useState([]);
@@ -136,80 +138,155 @@ const DataGuru = () => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-gray-900 mb-4">Data Guru</h1>
-      <div className="flex gap-2 mb-4">
-        <button className="btn-primary" onClick={handleAdd}>+ Tambah Guru</button>
-        <button className="btn-secondary" onClick={handleBatchAdd}>+ Tambah Banyak Guru</button>
+    <div className="container-responsive py-8">
+      {/* Header */}
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">Data Guru</h1>
+        <p className="text-gray-600">Kelola data guru untuk sistem absensi</p>
       </div>
+
+      {/* Action Buttons */}
+      <div className="flex flex-col sm:flex-row gap-3 mb-6">
+        <button className="btn-primary flex items-center justify-center" onClick={handleAdd}>
+          <PlusIcon className="h-5 w-5 mr-2" />
+          Tambah Guru
+        </button>
+        <button className="btn-secondary flex items-center justify-center" onClick={handleBatchAdd}>
+          <UserGroupIcon className="h-5 w-5 mr-2" />
+          Tambah Banyak Guru
+        </button>
+      </div>
+
+      {/* Alerts */}
+      {error && (
+        <div className="alert alert-error mb-6">
+          {error}
+        </div>
+      )}
+      {success && (
+        <div className="alert alert-success mb-6">
+          {success}
+        </div>
+      )}
+
+      {/* Single Add Form */}
       {showForm && (
-        <form onSubmit={handleSubmit} className="mb-4 flex gap-2 items-center">
-          <input
-            type="text"
-            className="input-field"
-            placeholder="Nama Guru"
-            value={formNama}
-            onChange={e => setFormNama(e.target.value)}
-            autoFocus
-            required
-            disabled={loading}
-          />
-          <button type="submit" className="btn-primary" disabled={loading}>{editId ? 'Update' : 'Tambah'}</button>
-          <button type="button" className="btn-secondary" onClick={handleCancel} disabled={loading}>Batal</button>
-        </form>
+        <div className="card mb-6">
+          <div className="card-header">
+            <h2 className="text-lg font-semibold text-gray-900">
+              {editId ? 'Edit Guru' : 'Tambah Guru Baru'}
+            </h2>
+          </div>
+          <div className="card-body">
+            <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3">
+              <div className="flex-1">
+                <input
+                  type="text"
+                  className="input-field"
+                  placeholder="Masukkan nama guru"
+                  value={formNama}
+                  onChange={e => setFormNama(e.target.value)}
+                  autoFocus
+                  required
+                  disabled={loading}
+                />
+              </div>
+              <div className="flex gap-2">
+                <button type="submit" className="btn-primary" disabled={loading}>
+                  {editId ? 'Update' : 'Tambah'}
+                </button>
+                <button type="button" className="btn-secondary" onClick={handleCancel} disabled={loading}>
+                  Batal
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
       )}
+
+      {/* Batch Add Form */}
       {showBatchForm && (
-        <form onSubmit={handleBatchSubmit} className="mb-4">
-          <div className="mb-2">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Masukkan nama guru (satu nama per baris):
-            </label>
-            <textarea
-              className="input-field w-full h-32"
-              placeholder="Nama Guru 1&#10;Nama Guru 2&#10;Nama Guru 3"
-              value={batchInput}
-              onChange={e => setBatchInput(e.target.value)}
-              disabled={loading}
-              required
-            />
+        <div className="card mb-6">
+          <div className="card-header">
+            <h2 className="text-lg font-semibold text-gray-900">Tambah Banyak Guru</h2>
           </div>
-          <div className="flex gap-2">
-            <button type="submit" className="btn-primary" disabled={loading}>
-              Tambah Guru
-            </button>
-            <button type="button" className="btn-secondary" onClick={handleCancel} disabled={loading}>
-              Batal
-            </button>
+          <div className="card-body">
+            <form onSubmit={handleBatchSubmit}>
+              <div className="form-group">
+                <label className="form-label">
+                  Masukkan nama guru (satu nama per baris):
+                </label>
+                <textarea
+                  className="input-field w-full h-32 resize-none"
+                  placeholder="Nama Guru 1&#10;Nama Guru 2&#10;Nama Guru 3"
+                  value={batchInput}
+                  onChange={e => setBatchInput(e.target.value)}
+                  disabled={loading}
+                  required
+                />
+              </div>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <button type="submit" className="btn-primary" disabled={loading}>
+                  Tambah Guru
+                </button>
+                <button type="button" className="btn-secondary" onClick={handleCancel} disabled={loading}>
+                  Batal
+                </button>
+              </div>
+            </form>
           </div>
-        </form>
+        </div>
       )}
-      {error && <div className="text-red-600 mb-2">{error}</div>}
-      {success && <div className="text-green-600 mb-2">{success}</div>}
+
+      {/* Data Table */}
       <div className="card">
         {loading ? (
-          <div className="p-4 text-center">Loading...</div>
+          <LoadingSpinner text="Memuat data guru..." />
+        ) : guruList.length === 0 ? (
+          <div className="p-6 text-center text-gray-500">
+            <UserGroupIcon className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+            <p>Belum ada data guru.</p>
+          </div>
         ) : (
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Guru</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {guruList.map((guru, idx) => (
-                <tr key={guru.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{idx + 1}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{guru.nama}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm">
-                    <button className="btn-secondary mr-2" onClick={() => handleEdit(guru)} disabled={loading}>Edit</button>
-                    <button className="btn-danger" onClick={() => handleDelete(guru.id)} disabled={loading}>Hapus</button>
-                  </td>
+          <div className="table-container">
+            <table className="table">
+              <thead>
+                <tr>
+                  <th className="w-16">No</th>
+                  <th>Nama Guru</th>
+                  <th className="w-48">Aksi</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {guruList.map((guru, idx) => (
+                  <tr key={guru.id}>
+                    <td className="text-center">{idx + 1}</td>
+                    <td className="font-medium">{guru.nama}</td>
+                    <td>
+                      <div className="flex gap-2">
+                        <button 
+                          className="btn-secondary btn-sm flex items-center" 
+                          onClick={() => handleEdit(guru)} 
+                          disabled={loading}
+                        >
+                          <PencilIcon className="h-4 w-4 mr-1" />
+                          Edit
+                        </button>
+                        <button 
+                          className="btn-danger btn-sm flex items-center" 
+                          onClick={() => handleDelete(guru.id)} 
+                          disabled={loading}
+                        >
+                          <TrashIcon className="h-4 w-4 mr-1" />
+                          Hapus
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
     </div>
