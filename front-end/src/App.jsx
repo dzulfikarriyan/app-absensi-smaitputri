@@ -9,7 +9,7 @@ import DataGuru from './pages/absensi-guru/DataGuru';
 import Navbar from './components/Navbar';
 import Kelas from './pages/Kelas';
 import Siswa from './pages/Siswa';
-import Rekap from './pages/Rekap';
+import RekapSiswa from './pages/RekapSiswa';
 import RekapGuru from './pages/absensi-guru/RekapGuru';
 
 // Simple test component
@@ -129,7 +129,7 @@ function App() {
           
           {/* Shared Routes (Admin & Wali Kelas) */}
           <Route path="/absensi-siswa" element={<RequireAuth><Absensi /></RequireAuth>} />
-          <Route path="/rekap" element={<RequireAuth><Rekap /></RequireAuth>} />
+          <Route path="/rekap-siswa" element={<RequireAuth><RekapSiswa /></RequireAuth>} />
           
           {/* Default Routes */}
           <Route path="/" element={<Navigate to={getDefaultRoute()} />} />

@@ -33,7 +33,7 @@ const Navbar = () => {
   const getNavItems = () => {
     if (userRole === 'admin') {
       // Check which section admin is currently in
-      const isInStudentSection = ['/absensi-siswa', '/rekap', '/kelas', '/siswa'].includes(location.pathname);
+      const isInStudentSection = ['/absensi-siswa', '/rekap-siswa', '/kelas', '/siswa'].includes(location.pathname);
       const isInTeacherSection = ['/absensi-guru', '/rekap-guru', '/data-guru'].includes(location.pathname);
       
       if (isInStudentSection) {
@@ -43,7 +43,7 @@ const Navbar = () => {
           { name: 'Kelas', path: '/kelas', icon: UserGroupIcon },
           { name: 'Siswa', path: '/siswa', icon: UserIcon },
           { name: 'Absensi Siswa', path: '/absensi-siswa', icon: ClipboardDocumentListIcon },
-          { name: 'Rekap Siswa', path: '/rekap', icon: ChartBarIcon },
+          { name: 'Rekap Siswa', path: '/rekap-siswa', icon: ChartBarIcon },
         ];
       } else if (isInTeacherSection) {
         // Show only teacher-related menus
@@ -60,7 +60,7 @@ const Navbar = () => {
           { name: 'Kelas', path: '/kelas', icon: UserGroupIcon },
           { name: 'Siswa', path: '/siswa', icon: UserIcon },
           { name: 'Absensi Siswa', path: '/absensi-siswa', icon: ClipboardDocumentListIcon },
-          { name: 'Rekap Siswa', path: '/rekap', icon: ChartBarIcon },
+          { name: 'Rekap Siswa', path: '/rekap-siswa', icon: ChartBarIcon },
           { name: 'Data Guru', path: '/data-guru', icon: UserIcon },
           { name: 'Absensi Guru', path: '/absensi-guru', icon: ClipboardDocumentListIcon },
           { name: 'Rekap Guru', path: '/rekap-guru', icon: ChartBarIcon },
@@ -71,7 +71,7 @@ const Navbar = () => {
       return [
         { name: 'Dashboard', path: '/dashboard-walikelas', icon: HomeIcon },
         { name: 'Absensi Siswa', path: '/absensi-siswa', icon: ClipboardDocumentListIcon },
-        { name: 'Rekap Siswa', path: '/rekap', icon: ChartBarIcon },
+        { name: 'Rekap Siswa', path: '/rekap-siswa', icon: ChartBarIcon },
       ];
     }
     return [];
@@ -82,7 +82,7 @@ const Navbar = () => {
   // Get section title based on current location
   const getSectionTitle = () => {
     if (userRole === 'admin') {
-      const isInStudentSection = ['/absensi-siswa', '/rekap', '/kelas', '/siswa'].includes(location.pathname);
+      const isInStudentSection = ['/absensi-siswa', '/rekap-siswa', '/kelas', '/siswa'].includes(location.pathname);
       const isInTeacherSection = ['/absensi-guru', '/rekap-guru', '/data-guru'].includes(location.pathname);
       
       if (isInStudentSection) {

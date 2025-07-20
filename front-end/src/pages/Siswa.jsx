@@ -216,7 +216,7 @@ const Siswa = () => {
           <select
             value={selectedKelas}
             onChange={(e) => setSelectedKelas(e.target.value)}
-            className="input-field max-w-xs"
+            className="input-field py-2 px-3 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-primary-200 w-full"
           >
             <option value="">Semua Kelas</option>
             {kelas.map(k => (
@@ -328,7 +328,7 @@ const Siswa = () => {
                   <select
                     value={formData.kelas_id}
                     onChange={e => setFormData({ ...formData, kelas_id: e.target.value })}
-                    className="input-field"
+                    className="input-field py-2 px-3 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-primary-200 w-full"
                     required
                   >
                     <option value="">Pilih Kelas</option>
@@ -387,7 +387,7 @@ const Siswa = () => {
                             <input type="text" value={row.nama} onChange={e => handleBatchChange(idx, 'nama', e.target.value)} className="input-field" placeholder="Nama siswa" required />
                           </td>
                           <td className="px-2 py-2">
-                            <select value={row.kelas_id} onChange={e => handleBatchChange(idx, 'kelas_id', e.target.value)} className="input-field" required>
+                            <select value={row.kelas_id} onChange={e => handleBatchChange(idx, 'kelas_id', e.target.value)} className="input-field py-2 px-3 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-primary-200 w-full" required>
                               <option value="">Pilih Kelas</option>
                               {kelas.map(k => (
                                 <option key={k.id} value={k.id}>{k.nama_kelas}</option>

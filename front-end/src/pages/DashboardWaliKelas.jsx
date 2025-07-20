@@ -23,7 +23,7 @@ const DashboardWaliKelas = () => {
       title: 'Lihat Rekap Siswa',
       description: 'Rekap absensi siswa per periode',
       icon: ChartBarIcon,
-      path: '/rekap',
+      path: '/rekap-siswa',
       color: 'bg-warning-500',
       bgColor: 'bg-warning-50',
       textColor: 'text-warning-600'
@@ -114,7 +114,7 @@ const DashboardWaliKelas = () => {
             <p className="text-gray-600 mb-4">
               Lihat rekap absensi siswa per periode. Anda dapat melihat statistik kehadiran dan mengunduh laporan dalam format Excel.
             </p>
-            <Link to="/rekap" className="btn-primary">
+            <Link to="/rekap-siswa" className="btn-primary">
               Lihat Rekap
             </Link>
           </div>
