@@ -2,6 +2,35 @@ const { AbsensiGuru, Guru } = require('../models');
 const { Op } = require('sequelize');
 const ExcelJS = require('exceljs');
 
+// Function to format date to Indonesian format (13 Juli 2025)
+function formatTanggalIndo(dateStr) {
+  if (!dateStr) return '';
+  const bulan = [
+    '', 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+    'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+  ];
+  const [year, month, day] = dateStr.split('-');
+  return `${parseInt(day)} ${bulan[parseInt(month)]} ${year}`;
+}
+
+// Function to get status label
+function getStatusLabel(status) {
+  switch (status) {
+    case 'hadir':
+      return 'Hadir';
+    case 'sakit':
+      return 'Sakit';
+    case 'izin':
+      return 'Izin';
+    case 'alpa':
+      return 'Alpa';
+    case 'terlambat':
+      return 'Terlambat';
+    default:
+      return status;
+  }
+}
+
 // Input absensi satu guru
 const inputAbsensiGuru = async (req, res) => {
   try {
@@ -124,7 +153,7 @@ const downloadRekapExcel = async (req, res) => {
     // Set up headers
     worksheet.columns = [
       { header: 'No', key: 'no', width: 5 },
-      { header: 'Tanggal', key: 'tanggal', width: 15 },
+      { header: 'Tanggal', key: 'tanggal', width: 20 },
       { header: 'Nama Guru', key: 'nama_guru', width: 30 },
       { header: 'Status', key: 'status', width: 15 },
       { header: 'Keterangan', key: 'keterangan', width: 30 }
@@ -138,11 +167,11 @@ const downloadRekapExcel = async (req, res) => {
       fgColor: { argb: 'FFE0E0E0' }
     };
 
-    // Add data rows
+    // Add data rows with formatted date
     absensi.forEach((item, index) => {
       worksheet.addRow({
         no: index + 1,
-        tanggal: item.tanggal,
+        tanggal: formatTanggalIndo(item.tanggal),
         nama_guru: item.guru?.nama || '-',
         status: getStatusLabel(item.status),
         keterangan: item.keterangan || '-'
@@ -200,24 +229,6 @@ const downloadRekapExcel = async (req, res) => {
   } catch (error) {
     console.error('Error generating Excel:', error);
     res.status(500).json({ success: false, message: 'Gagal mengunduh file Excel', error: error.message });
-  }
-};
-
-// Helper function for status labels
-const getStatusLabel = (status) => {
-  switch (status) {
-    case 'hadir':
-      return 'Hadir';
-    case 'sakit':
-      return 'Sakit';
-    case 'izin':
-      return 'Izin';
-    case 'alpa':
-      return 'Alpa';
-    case 'terlambat':
-      return 'Terlambat';
-    default:
-      return status;
   }
 };
 

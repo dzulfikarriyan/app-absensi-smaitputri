@@ -150,28 +150,27 @@ const Rekap = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Rekap Absensi</h1>
-        <p className="text-gray-600 mt-2">Lihat rekap kehadiran siswa per periode</p>
+    <div className="max-w-3xl mx-auto px-2 py-6">
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-gray-900">Rekap Absensi</h1>
+        <p className="text-gray-500 mt-1 text-base">Lihat rekap kehadiran siswa per periode</p>
       </div>
 
       {/* Filter */}
-      <div className="card mb-6">
-        <div className="flex items-center mb-4">
+      <div className="card mb-4 p-4 shadow-sm border border-gray-100 bg-white rounded-lg">
+        <div className="flex items-center mb-3">
           <FunnelIcon className="h-5 w-5 text-gray-400 mr-2" />
           <h2 className="text-lg font-semibold text-gray-900">Filter Data</h2>
         </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-xs font-semibold text-gray-600 mb-1">
               Pilih Kelas
             </label>
             <select
               value={selectedKelas}
               onChange={(e) => setSelectedKelas(e.target.value)}
-              className="input-field"
+              className="input-field py-2 px-3 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-primary-200 w-full"
             >
               <option value="">Pilih Kelas</option>
               {kelas.map(k => (
@@ -181,55 +180,51 @@ const Rekap = () => {
               ))}
             </select>
           </div>
-
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-xs font-semibold text-gray-600 mb-1">
               Tanggal Mulai
             </label>
             <div className="relative">
-              <CalendarIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <CalendarIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
               <input
                 type="date"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
-                className="input-field pl-10"
+                className="input-field pl-8 py-2 px-3 text-sm border border-gray-300 rounded w-full focus:ring-2 focus:ring-primary-200"
               />
             </div>
           </div>
-
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-xs font-semibold text-gray-600 mb-1">
               Tanggal Akhir
             </label>
             <div className="relative">
-              <CalendarIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <CalendarIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
               <input
                 type="date"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
-                className="input-field pl-10"
+                className="input-field pl-8 py-2 px-3 text-sm border border-gray-300 rounded w-full focus:ring-2 focus:ring-primary-200"
               />
             </div>
           </div>
-
           <div className="flex items-end">
             <button
               onClick={fetchRekap}
               disabled={!selectedKelas || !startDate || !endDate}
-              className="btn-primary w-full disabled:opacity-50 disabled:cursor-not-allowed"
+              className="btn-primary w-full py-2 rounded font-semibold text-base disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Tampilkan Rekap
             </button>
           </div>
         </div>
-
         {selectedKelas && startDate && endDate && (
-          <div className="mt-4 p-4 bg-blue-50 rounded-lg">
-            <p className="text-sm text-blue-800">
+          <div className="mt-4 p-3 bg-blue-50 rounded-lg">
+            <p className="text-xs text-blue-800">
               <strong>Periode:</strong> {formatDate(startDate)} - {formatDate(endDate)} 
               ({calculateTotalDays()} hari)
             </p>
-            <p className="text-sm text-blue-800">
+            <p className="text-xs text-blue-800">
               <strong>Kelas:</strong> {kelas.find(k => k.id == selectedKelas)?.nama_kelas}
             </p>
           </div>
@@ -238,14 +233,14 @@ const Rekap = () => {
 
       {/* Tabel Rekap */}
       {selectedKelas && startDate && endDate && (
-        <div className="card">
-          <div className="mb-4 flex flex-wrap gap-2 justify-between items-center">
-            <div>
-              <button onClick={handleDownloadExcel} className="btn-primary mr-2">Download Rekap (Sesuai Filter)</button>
-              <button onClick={handleDownloadExcelAll} className="btn-secondary">Download Semua Data</button>
+        <div className="card p-4 shadow-sm border border-gray-100 bg-white rounded-lg">
+          <div className="mb-3 flex flex-wrap gap-2 justify-between items-center">
+            <div className="flex gap-2">
+              <button onClick={handleDownloadExcel} className="btn-primary py-2 px-4 rounded font-semibold text-sm">Download Rekap (Sesuai Filter)</button>
+              <button onClick={handleDownloadExcelAll} className="btn-secondary py-2 px-4 rounded font-semibold text-sm">Download Semua Data</button>
             </div>
           </div>
-          <div className="mb-4">
+          <div className="mb-3">
             <h2 className="text-lg font-semibold text-gray-900 flex items-center">
               <ChartBarIcon className="h-5 w-5 mr-2" />
               Rekap Absensi Siswa
@@ -253,58 +248,40 @@ const Rekap = () => {
           </div>
 
           {loading ? (
-            <LoadingSpinner size="lg" text="Memuat data rekap..." />
+            <div className="flex justify-center items-center py-8">
+              <LoadingSpinner size="lg" text="Memuat data rekap..." />
+            </div>
           ) : rekapData.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
-              <UserGroupIcon className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+            <div className="text-center py-8 text-gray-400">
+              <UserGroupIcon className="h-10 w-10 mx-auto mb-3 text-gray-200" />
               <p>Tidak ada data rekap untuk periode yang dipilih</p>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
+            <div className="overflow-x-auto rounded-lg border border-gray-100">
+              <table className="min-w-full text-sm divide-y divide-gray-100">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      No
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Nama Siswa
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Total Hari
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Hadir
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Sakit
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Izin
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Alpa
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Terlambat
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      % Kehadiran
-                    </th>
+                    <th className="px-3 py-2 text-left font-semibold text-gray-500 uppercase tracking-wider">No</th>
+                    <th className="px-3 py-2 text-left font-semibold text-gray-500 uppercase tracking-wider">Nama Siswa</th>
+                    <th className="px-3 py-2 text-left font-semibold text-gray-500 uppercase tracking-wider">Total Hari</th>
+                    <th className="px-3 py-2 text-left font-semibold text-gray-500 uppercase tracking-wider">Hadir</th>
+                    <th className="px-3 py-2 text-left font-semibold text-gray-500 uppercase tracking-wider">Sakit</th>
+                    <th className="px-3 py-2 text-left font-semibold text-gray-500 uppercase tracking-wider">Izin</th>
+                    <th className="px-3 py-2 text-left font-semibold text-gray-500 uppercase tracking-wider">Alpa</th>
+                    <th className="px-3 py-2 text-left font-semibold text-gray-500 uppercase tracking-wider">Terlambat</th>
+                    <th className="px-3 py-2 text-left font-semibold text-gray-500 uppercase tracking-wider">% Kehadiran</th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="bg-white divide-y divide-gray-50">
                   {rekapData.map((item, index) => {
                     const attendancePercentage = calculateAttendancePercentage(item.hadir, item.total);
                     return (
                       <tr key={item.siswa.id} className="hover:bg-gray-50">
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          {index + 1}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="flex items-center">
-                            <div className="h-8 w-8 rounded-full bg-gray-300 flex items-center justify-center mr-3">
-                              <span className="text-sm font-medium text-gray-700">
+                        <td className="px-3 py-2 whitespace-nowrap text-gray-800 text-center">{index + 1}</td>
+                        <td className="px-3 py-2 whitespace-nowrap">
+                          <div className="flex items-center gap-2">
+                            <div className="h-7 w-7 rounded-full bg-gray-200 flex items-center justify-center">
+                              <span className="text-xs font-bold text-gray-600">
                                 {item.siswa.nama.charAt(0).toUpperCase()}
                               </span>
                             </div>
@@ -313,35 +290,33 @@ const Rekap = () => {
                             </span>
                           </div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          {item.total}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-3 py-2 whitespace-nowrap text-gray-800 text-center">{item.total}</td>
+                        <td className="px-3 py-2 whitespace-nowrap text-center">
                           <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor('hadir')}`}>
                             {item.hadir}
                           </span>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-3 py-2 whitespace-nowrap text-center">
                           <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor('sakit')}`}>
                             {item.sakit}
                           </span>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-3 py-2 whitespace-nowrap text-center">
                           <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor('izin')}`}>
                             {item.izin}
                           </span>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-3 py-2 whitespace-nowrap text-center">
                           <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor('alpa')}`}>
                             {item.alpa}
                           </span>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-3 py-2 whitespace-nowrap text-center">
                           <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor('terlambat')}`}>
                             {item.terlambat}
                           </span>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-3 py-2 whitespace-nowrap text-center">
                           {attendancePercentage}%
                         </td>
                       </tr>

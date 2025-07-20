@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { absensiGuruAPI, guruAPI } from '../../services/api';
 import { FunnelIcon, ChartBarIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 import LoadingSpinner from '../../components/LoadingSpinner';
+import { formatDate } from '../../utils/dateUtils';
 
 const getStatusColor = (status) => {
   switch (status) {
@@ -35,6 +36,22 @@ const getStatusLabel = (status) => {
     default:
       return status;
   }
+};
+
+// Function to format date for display (13 Juli 2025)
+const formatDateForDisplay = (dateString) => {
+  if (!dateString) return '-';
+  
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return dateString; // Return original if invalid date
+  
+  const options = { 
+    day: 'numeric', 
+    month: 'long', 
+    year: 'numeric' 
+  };
+  
+  return date.toLocaleDateString('id-ID', options);
 };
 
 const RekapGuru = () => {
@@ -290,7 +307,7 @@ const RekapGuru = () => {
               <tbody>
                 {rekap.map((item, idx) => (
                   <tr key={idx}>
-                    <td>{item.tanggal}</td>
+                    <td>{formatDateForDisplay(item.tanggal)}</td>
                     <td className="font-medium">{item.guru?.nama || '-'}</td>
                     <td>
                       <span className={`status-badge ${getStatusColor(item.status)}`}>
