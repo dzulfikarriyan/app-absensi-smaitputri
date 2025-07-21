@@ -1,6 +1,5 @@
 const express = require('express');
 const cors = require('cors');
-const bodyParser = require('body-parser');
 const sequelize = require('./config/database');
 
 // Import routes
@@ -16,10 +15,19 @@ const { Kelas, Siswa, Absensi } = require('./models');
 const app = express();
 const PORT = process.env.PORT || 3002;
 
-// Middleware
-app.use(cors());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+// Konfigurasi CORS yang lebih aman untuk production
+const corsOptions = {
+  origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+  optionsSuccessStatus: 200
+};
+
+app.use(cors(corsOptions));
+console.log(`CORS diaktifkan untuk origin: ${corsOptions.origin}`);
+
+
+// Middleware - Mengganti body-parser yang sudah usang
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use('/api/kelas', kelasRoutes);

@@ -19,27 +19,39 @@ const dbConfig = {
 
 // Add SSL configuration for production/Aiven if DB_SSL is true
 if (process.env.DB_SSL === 'true') {
-  // We assume ca.pem is placed in the same directory as this config file
-  const caCertPath = path.join(__dirname, 'ca.pem');
+  // Path untuk sertifikat di Render adalah /etc/secrets/ca.pem
+  // Path lokal untuk development adalah di dalam folder config
+  const renderCaPath = '/etc/secrets/ca.pem';
+  const localCaPath = path.join(__dirname, 'ca.pem');
 
-  if (fs.existsSync(caCertPath)) {
+  let caCertPath;
+
+  if (fs.existsSync(renderCaPath)) {
+    caCertPath = renderCaPath;
+    console.log('🔍 Ditemukan sertifikat SSL di path Render.');
+  } else if (fs.existsSync(localCaPath)) {
+    caCertPath = localCaPath;
+    console.log('🔍 Ditemukan sertifikat SSL di path lokal.');
+  }
+
+  if (caCertPath) {
     dbConfig.dialectOptions = {
       ssl: {
         rejectUnauthorized: true, // Ensures the server certificate is verified
         ca: fs.readFileSync(caCertPath).toString(),
       }
     };
-    console.log('✅ Menggunakan koneksi SSL ke database.');
+    console.log(`✅ Menggunakan koneksi SSL ke database dari ${caCertPath}.`);
   } else {
     // This will stop the application if the certificate is missing in production
-    console.error(`❌ KRITIS: Variabel DB_SSL=true tapi file sertifikat tidak ditemukan di ${caCertPath}`);
+    console.error('❌ KRITIS: Variabel DB_SSL=true tapi file sertifikat "ca.pem" tidak ditemukan.');
     process.exit(1);
   }
 }
 
 // Konfigurasi database dengan environment variables atau default
 const sequelize = new Sequelize(
-  process.env.DB_NAME || 'absensi_guru',
+  process.env.DB_NAME || 'absensi_siswa', // Mengganti default ke absensi_siswa
   process.env.DB_USER || 'root',
   process.env.DB_PASSWORD || 'Sukses!@#99', // Ganti dengan password MySQL Anda
   dbConfig
