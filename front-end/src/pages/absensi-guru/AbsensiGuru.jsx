@@ -1,8 +1,12 @@
-import { useState, useEffect } from 'react';
-import { getToday, formatDate, getDayName } from '../../utils/dateUtils';
-import LoadingSpinner from '../../components/LoadingSpinner';
-import { CheckIcon, CalendarIcon, ClockIcon } from '@heroicons/react/24/outline';
-import { guruAPI, absensiGuruAPI } from '../../services/api';
+import { useState, useEffect } from "react";
+import { getToday, formatDate, getDayName } from "../../utils/dateUtils";
+import LoadingSpinner from "../../components/LoadingSpinner";
+import {
+  CheckIcon,
+  CalendarIcon,
+  ClockIcon,
+} from "@heroicons/react/24/outline";
+import { guruAPI, absensiGuruAPI } from "../../services/api";
 
 const AbsensiGuru = () => {
   const [guruList, setGuruList] = useState([]);
@@ -10,20 +14,26 @@ const AbsensiGuru = () => {
   const [absensiData, setAbsensiData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [successMsg, setSuccessMsg] = useState('');
-  const [errorMsg, setErrorMsg] = useState('');
+  const [successMsg, setSuccessMsg] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
 
   // Ambil data guru dari backend
   const fetchGuru = async () => {
     setLoading(true);
-    setErrorMsg('');
+    setErrorMsg("");
     try {
       const res = await guruAPI.getAll();
       setGuruList(res.data.data);
       // Inisialisasi absensiData
-      setAbsensiData(res.data.data.map(g => ({ guru_id: g.id, status: 'hadir', keterangan: '' })));
+      setAbsensiData(
+        res.data.data.map((g) => ({
+          guru_id: g.id,
+          status: "hadir",
+          keterangan: "",
+        }))
+      );
     } catch (err) {
-      setErrorMsg('Gagal mengambil data guru');
+      setErrorMsg("Gagal mengambil data guru");
     } finally {
       setLoading(false);
     }
@@ -33,25 +43,35 @@ const AbsensiGuru = () => {
   const fetchAbsensiHariIni = async () => {
     if (!selectedTanggal) return;
     setLoading(true);
-    setErrorMsg('');
+    setErrorMsg("");
     try {
       const res = await absensiGuruAPI.getByTanggal(selectedTanggal);
       if (res.data.success && res.data.data.length > 0) {
         // Update absensiData dengan data yang sudah ada
-        setAbsensiData(guruList.map(guru => {
-          const existing = res.data.data.find(abs => abs.guru_id === guru.id);
-          return {
-            guru_id: guru.id,
-            status: existing ? existing.status : 'hadir',
-            keterangan: existing ? existing.keterangan : ''
-          };
-        }));
+        setAbsensiData(
+          guruList.map((guru) => {
+            const existing = res.data.data.find(
+              (abs) => abs.guru_id === guru.id
+            );
+            return {
+              guru_id: guru.id,
+              status: existing ? existing.status : "hadir",
+              keterangan: existing ? existing.keterangan : "",
+            };
+          })
+        );
       } else {
         // Default hadir
-        setAbsensiData(guruList.map(g => ({ guru_id: g.id, status: 'hadir', keterangan: '' })));
+        setAbsensiData(
+          guruList.map((g) => ({
+            guru_id: g.id,
+            status: "hadir",
+            keterangan: "",
+          }))
+        );
       }
     } catch (err) {
-      setErrorMsg('Gagal mengambil data absensi guru');
+      setErrorMsg("Gagal mengambil data absensi guru");
     } finally {
       setLoading(false);
     }
@@ -70,35 +90,41 @@ const AbsensiGuru = () => {
   }, [guruList, selectedTanggal]);
 
   const handleStatusChange = (guruId, status) => {
-    setAbsensiData(prev => prev.map(item => item.guru_id === guruId ? { ...item, status } : item));
+    setAbsensiData((prev) =>
+      prev.map((item) => (item.guru_id === guruId ? { ...item, status } : item))
+    );
   };
   const handleKeteranganChange = (guruId, keterangan) => {
-    setAbsensiData(prev => prev.map(item => item.guru_id === guruId ? { ...item, keterangan } : item));
+    setAbsensiData((prev) =>
+      prev.map((item) =>
+        item.guru_id === guruId ? { ...item, keterangan } : item
+      )
+    );
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setSuccessMsg('');
-    setErrorMsg('');
+    setSuccessMsg("");
+    setErrorMsg("");
     if (!selectedTanggal) {
-      setErrorMsg('Tanggal harus diisi');
+      setErrorMsg("Tanggal harus diisi");
       return;
     }
     if (absensiData.length === 0) {
-      setErrorMsg('Tidak ada data guru untuk diabsensi');
+      setErrorMsg("Tidak ada data guru untuk diabsensi");
       return;
     }
     setSubmitting(true);
     try {
       const payload = {
         tanggal: selectedTanggal,
-        absensi_data: absensiData
+        absensi_data: absensiData,
       };
       await absensiGuruAPI.inputBatch(payload);
-      setSuccessMsg('Absensi guru berhasil disimpan!');
+      setSuccessMsg("Absensi guru berhasil disimpan!");
       fetchAbsensiHariIni();
     } catch (err) {
-      setErrorMsg('Gagal menyimpan absensi guru');
+      setErrorMsg("Gagal menyimpan absensi guru");
     } finally {
       setSubmitting(false);
     }
@@ -113,42 +139,45 @@ const AbsensiGuru = () => {
       </div>
 
       {/* Alerts */}
-      {errorMsg && (
-        <div className="alert alert-error mb-6">
-          {errorMsg}
-        </div>
-      )}
+      {errorMsg && <div className="alert alert-error mb-6">{errorMsg}</div>}
       {successMsg && (
-        <div className="alert alert-success mb-6">
-          {successMsg}
-        </div>
+        <div className="alert alert-success mb-6">{successMsg}</div>
       )}
 
       <form onSubmit={handleSubmit}>
         {/* Date Selection */}
-        <div className="card mb-6">
-          <div className="card-header">
+        <div className="card mb-6 border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+          <div className="card-header bg-gray-50 px-4 py-3 border-b border-gray-200">
             <div className="flex items-center">
-              <CalendarIcon className="h-5 w-5 text-gray-500 mr-2" />
-              <h2 className="text-lg font-semibold text-gray-900">Pilih Tanggal</h2>
+              <CalendarIcon className="h-5 w-5 text-gray-600 mr-2" />
+              <h2 className="text-lg font-semibold text-gray-800">
+                Pilih Tanggal
+              </h2>
             </div>
           </div>
-          <div className="card-body">
+          <div className="card-body p-4">
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-              <div className="flex-1">
-                <label className="form-label">Tanggal Absensi</label>
-                <input 
-                  type="date" 
-                  value={selectedTanggal} 
-                  onChange={e => setSelectedTanggal(e.target.value)} 
-                  className="input-field" 
-                  required 
+              <div className="w-full sm:w-auto flex-1">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Tanggal Absensi
+                </label>
+                <input
+                  type="date"
+                  value={selectedTanggal}
+                  onChange={(e) => setSelectedTanggal(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                  required
                 />
               </div>
               {selectedTanggal && (
-                <div className="flex items-center text-sm text-gray-600">
-                  <ClockIcon className="h-4 w-4 mr-2" />
-                  {formatDate(selectedTanggal)} ({getDayName(selectedTanggal)})
+                <div className="flex items-center text-sm text-gray-700 bg-gray-50 px-3 py-2 rounded-md">
+                  <ClockIcon className="h-4 w-4 mr-2 text-gray-500" />
+                  <span className="font-medium">
+                    {formatDate(selectedTanggal)}
+                  </span>
+                  <span className="ml-2 text-gray-600">
+                    ({getDayName(selectedTanggal)})
+                  </span>
                 </div>
               )}
             </div>
@@ -158,7 +187,9 @@ const AbsensiGuru = () => {
         {/* Attendance Table */}
         <div className="card mb-6">
           <div className="card-header">
-            <h2 className="text-lg font-semibold text-gray-900">Data Absensi Guru</h2>
+            <h2 className="text-lg font-semibold text-gray-900">
+              Data Absensi Guru
+            </h2>
           </div>
           <div className="card-body p-0">
             {loading ? (
@@ -180,15 +211,19 @@ const AbsensiGuru = () => {
                   </thead>
                   <tbody>
                     {guruList.map((guru, idx) => {
-                      const absensiItem = absensiData.find(a => a.guru_id === guru.id) || { status: 'hadir', keterangan: '' };
+                      const absensiItem = absensiData.find(
+                        (a) => a.guru_id === guru.id
+                      ) || { status: "hadir", keterangan: "" };
                       return (
                         <tr key={guru.id}>
                           <td className="text-center">{idx + 1}</td>
                           <td className="font-medium">{guru.nama}</td>
                           <td>
-                            <select 
-                              value={absensiItem.status} 
-                              onChange={e => handleStatusChange(guru.id, e.target.value)} 
+                            <select
+                              value={absensiItem.status}
+                              onChange={(e) =>
+                                handleStatusChange(guru.id, e.target.value)
+                              }
                               className="input-field"
                             >
                               <option value="hadir">Hadir</option>
@@ -199,12 +234,14 @@ const AbsensiGuru = () => {
                             </select>
                           </td>
                           <td>
-                            <input 
-                              type="text" 
-                              value={absensiItem.keterangan} 
-                              onChange={e => handleKeteranganChange(guru.id, e.target.value)} 
-                              className="input-field" 
-                              placeholder="Keterangan (opsional)" 
+                            <input
+                              type="text"
+                              value={absensiItem.keterangan}
+                              onChange={(e) =>
+                                handleKeteranganChange(guru.id, e.target.value)
+                              }
+                              className="input-field"
+                              placeholder="Keterangan (opsional)"
                             />
                           </td>
                         </tr>
@@ -219,9 +256,9 @@ const AbsensiGuru = () => {
 
         {/* Submit Button */}
         <div className="flex justify-end">
-          <button 
-            type="submit" 
-            disabled={submitting || loading} 
+          <button
+            type="submit"
+            disabled={submitting || loading}
             className="btn-primary btn-lg flex items-center"
           >
             {submitting ? (
@@ -242,4 +279,4 @@ const AbsensiGuru = () => {
   );
 };
 
-export default AbsensiGuru; 
+export default AbsensiGuru;
